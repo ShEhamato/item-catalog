@@ -22,7 +22,12 @@ def viewCatalog(catalog_id):
 @app.route('/catalogs/<int:catalog_id>/edit')
 def editCatalog(catalog_id):
     return render_template('catalog-edit.html') 
- 
+
+
+@app.route('/catalogs/<int:catalog_id>/delete')
+def deleteCatalog(catalog_id):
+    return render_template('catalog-delete.html') 
+
 
 
 if __name__=='__main__':
