@@ -1,12 +1,16 @@
 from flask import Flask, render_template
 
+catalogList=[{'name':'Sports','description':'Items that relate to sports including'},
+{'name':'Technology','description':'Items that relate to high technology including'},
+{'name':'Books','description':'Items that books'}]
+
 app = Flask(__name__)
 
 
 @app.route('/')
 @app.route('/catalogs')
 def listCatalog():
-    return render_template('catalog-list.html')
+    return render_template('catalog-list.html', catalog_list=catalogList )
 
 
 @app.route('/catalogs/new')
