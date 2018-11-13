@@ -3,13 +3,20 @@
     <header>
 
     </header>
-    <body>
+    <body class="catalog-list">
         <h2>Catalogs</h2>
+        <div>
         {%for cat in catalog_list%}
         <div>
-            <h5>{{cat.name}}</h5>
+            <h5><a href="{{url_for('viewCatalog', catalog_id=cat.id)}}">{{cat.name}}</a></h5>
             <p>{{cat.description}}</p>
         </div>
+        <div>
+            <a href='{{url_for('editCatalog', catalog_id=cat.id)}}'> edit</a>
+            <a href='{{url_for('deleteCatalog', catalog_id=cat.id)}}'> delete</a>
+        </div>
+    <hr>
         {%endfor%}
+    </div>
     </body>
 </html>
