@@ -2,3 +2,8 @@
     float: left;
     width: 25%;
 }
+
+.catalog-header{
+    padding: 20 px;
+    background-color: chocolate;
+}
