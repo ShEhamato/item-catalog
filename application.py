@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, redirect, request, flash
+from flask import Flask, render_template, url_for, redirect, request, flash, make_response
 from database_setup import Base,  User
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -249,7 +249,7 @@ def disconnect():
         del login_session['username']
         del login_session['email']
         del login_session['picture']
-        # del login_session['user_id']
+        del login_session['user_id']
         del login_session['provider']
         flash("You have successfully been logged out.")
         return redirect(url_for('showLogin'))
@@ -291,14 +291,18 @@ def getUserID(email):
 def listCatalog():
     session = DBSession()
     catalogList = session.query(Catalog)
+    if 'user_id' not in login_session:
+        return render_template('catalog-list-not-loggedin.html', catalog_list=catalogList )
     return render_template('catalog-list.html', catalog_list=catalogList )
 
 
 @app.route('/catalogs/new', methods=['POST', 'GET'])
 def createCatalog():
+    if 'user_id' not in login_session:
+        return redirect(url_for('showLogin'))
     if request.method == 'POST':
         session = DBSession()
-        catalog= Catalog(name = request.form['name'], description= request.form['description'])
+        catalog= Catalog(name = request.form['name'], description= request.form['description'], user_id=login_session['user_id'])
         session.add(catalog)
         session.commit()
         return redirect(url_for('listCatalog'))
@@ -315,8 +319,12 @@ def viewCatalog(catalog_id):
 
 @app.route('/catalogs/<int:catalog_id>/edit', methods=['POST', 'GET'])
 def editCatalog(catalog_id):
+    if 'username' not in login_session:
+        return redirect(url_for('showLogin'))
     session = DBSession()
     catalog = session.query(Catalog).filter_by(id=catalog_id).one()
+    if login_session['user_id'] != catalog.user_id:
+        return "<script>function myFunction() {alert('You are not authorized to edit this catalog. Please create your own catalog in order to edit.');}</script><body onload='myFunction()'>"
     if request.method == 'POST':
         if request.form['name']:
             catalog.name=request.form['name']
@@ -331,8 +339,13 @@ def editCatalog(catalog_id):
 
 @app.route('/catalogs/<int:catalog_id>/delete' , methods=['POST', 'GET'])
 def deleteCatalog(catalog_id):
+    if 'username' not in login_session:
+        return redirect(url_for('showLogin'))
     session = DBSession()
     catalog = session.query(Catalog).filter_by(id=catalog_id).one()
+    if login_session['user_id'] != catalog.user_id:
+        return "<script>function myFunction() {alert('You are not authorized to delete this catalog. Please create your own catalog in order to delete.');}</script><body onload='myFunction()'>"
+    
     if request.method == 'POST':
         session.delete(catalog)
         session.commit()
