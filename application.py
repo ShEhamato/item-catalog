@@ -352,6 +352,77 @@ def deleteCatalog(catalog_id):
         return redirect(url_for('listCatalog'))
     else:
         return render_template('catalog-delete.html', catalog = catalog) 
+##############################################
+@app.route('/catalogs/<int:catalog_id>/item-list')
+def showItemList(catalog_id):
+    session = DBSession()
+    itemList = session.query(CatalogItem).filter_by(catalog_id=catalog_id)
+    if 'user_id' not in login_session:
+        return render_template('item-catalog-list-not-loggedin.html', item_list=itemList )
+    return render_template('item-catalog-list.html', item_list=itemList )
+
+
+@app.route('/catalogs/<int:catalog_id>/items/new', methods=['POST', 'GET'])
+def createItem(catalog_id):
+    if 'user_id' not in login_session:
+        return redirect(url_for('showLogin'))
+    if request.method == 'POST':
+        session = DBSession()
+        item= CatalogItem(name = request.form['name'], description= request.form['description'], price = request.form['price'], 
+       duration= request.form['duration'], catalog_id= catalog_id, user_id=login_session['user_id'])
+        session.add(item)
+        session.commit()
+        return redirect(url_for('showItemList'))
+    else:
+        return render_template('item-new.html', catalog_id=catalog_id )  
+
+
+@app.route('/catalogs/<int:catalog_id>/items/<int:item_id>/view')
+def viewItem(catalog_id,item_id):
+    session = DBSession()
+    item = session.query(CatalogItem).filter_by(id=item_id)
+    return render_template('item-view.html', item = item, catalog_id=catalog_id ) 
+
+
+@app.route('/catalogs/<int:catalog_id>/items/<int:item_id>/edit', methods=['POST', 'GET'])
+def editItem(catalog_id, item_id):
+    if 'username' not in login_session:
+        return redirect(url_for('showLogin'))
+    session = DBSession()
+    item = session.query(CatalogItem).filter_by(id=item_id).one()
+    if login_session['user_id'] != item.user_id:
+        return "<script>function myFunction() {alert('You are not authorized to edit this catalog. Please create your own catalog in order to edit.');}</script><body onload='myFunction()'>"
+    if request.method == 'POST':
+        if request.form['name']:
+            item.name=request.form['name']
+        if request.form['description']:
+            item.description= request.form['description']
+        if request.form['price']:
+            item.description= request.form['price']
+        if request.form['duration']:
+            item.description= request.form['duration']
+        session.add(item)
+        session.commit()
+        return redirect(url_for('showItemList', catalog_id= catalog_id ))
+    else:
+        return render_template('item-edit.html' , item = item, catalog_id= catalog_id ) 
+
+
+@app.route('/catalogs/<int:catalog_id>/items/<int:item_id>/delete' , methods=['POST', 'GET'])
+def deleteItem(catalog_id, item_id):
+    if 'username' not in login_session:
+        return redirect(url_for('showLogin'))
+    session = DBSession()
+    item = session.query(CatalogItem).filter_by(id=item_id).one()
+    if login_session['user_id'] != item.user_id:
+        return "<script>function myFunction() {alert('You are not authorized to delete this catalog. Please create your own catalog in order to delete.');}</script><body onload='myFunction()'>"
+    
+    if request.method == 'POST':
+        session.delete(item)
+        session.commit()
+        return redirect(url_for('showItemList', catalog_id= catalog_id ))
+    else:
+        return render_template('catalog-delete.html', item = item , catalog_id= catalog_id) 
 
 
 
