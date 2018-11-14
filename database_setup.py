@@ -1,7 +1,7 @@
 import sys
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship ,  backref
 from sqlalchemy import create_engine
 
 Base = declarative_base()
@@ -34,9 +34,10 @@ class CatalogItem(Base):
     price = Column(String(8))
     duration = Column(String(250))
     catalog_id = Column(Integer, ForeignKey('catalog.id'))
-    catalog = relationship(Catalog)
+    catalog = relationship(Catalog, backref=backref("items", cascade="all,delete"))
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
+    
 
 
 engine = create_engine('sqlite:///catalog.db')
