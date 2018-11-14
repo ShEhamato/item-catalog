@@ -1,0 +1,21 @@
+<!DocType html>
+<html>
+    <header>
+            <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+    </header>
+    <body class="catalog-list">
+        <a href='{{url_for('createCatalog')}}'>
+            Create New Catalog
+        </a>
+        <h2 class ="catalog-header">Catalogs</h2>
+        <div>
+        {%for cat in catalog_list%}
+        <div>
+            <h5><a href="{{url_for('viewCatalog', catalog_id=cat.id)}}">{{cat.name}}</a></h5>
+            <p>{{cat.description}}</p>
+        </div>
+    <hr>
+        {%endfor%}
+    </div>
+    </body>
+</html>
