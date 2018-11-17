@@ -170,6 +170,8 @@ def gconnect():
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
+        print login_session['access_token']
+        print login_session['provider']
         response = make_response(json.dumps('Current user is already connected.'),
                                  200)
         response.headers['Content-Type'] = 'application/json'
@@ -191,7 +193,7 @@ def gconnect():
     login_session['email'] = data['email']
     # ADD PROVIDER TO LOGIN SESSION
     login_session['provider'] = 'google'
-
+    print login_session['access_token']
 
     # see if user exists
     user_id = getUserID(login_session['email'])
@@ -358,21 +360,25 @@ def showItemList(catalog_id):
     session = DBSession()
     itemList = session.query(CatalogItem).filter_by(catalog_id=catalog_id)
     if 'user_id' not in login_session:
-        return render_template('item-catalog-list-not-loggedin.html', item_list=itemList )
-    return render_template('item-catalog-list.html', item_list=itemList )
+        return render_template('item-list-not-loggedin.html', item_list=itemList, catalog_id=catalog_id )
+    return render_template('item-list.html', item_list=itemList , catalog_id=catalog_id )
 
 
 @app.route('/catalogs/<int:catalog_id>/items/new', methods=['POST', 'GET'])
 def createItem(catalog_id):
     if 'user_id' not in login_session:
         return redirect(url_for('showLogin'))
+    session = DBSession()
+    catalog = session.query(Catalog).filter_by(id=catalog_id).one()
+    if login_session['user_id'] != catalog.user_id:
+        return "<script>function myFunction() {alert('You are not authorized to delete this catalog. Please create your own catalog in order to delete.');}</script><body onload='myFunction()'>"
     if request.method == 'POST':
         session = DBSession()
         item= CatalogItem(name = request.form['name'], description= request.form['description'], price = request.form['price'], 
        duration= request.form['duration'], catalog_id= catalog_id, user_id=login_session['user_id'])
         session.add(item)
         session.commit()
-        return redirect(url_for('showItemList'))
+        return redirect(url_for('showItemList', catalog_id=catalog_id ))
     else:
         return render_template('item-new.html', catalog_id=catalog_id )  
 
@@ -380,7 +386,7 @@ def createItem(catalog_id):
 @app.route('/catalogs/<int:catalog_id>/items/<int:item_id>/view')
 def viewItem(catalog_id,item_id):
     session = DBSession()
-    item = session.query(CatalogItem).filter_by(id=item_id)
+    item = session.query(CatalogItem).filter_by(id=item_id).one()
     return render_template('item-view.html', item = item, catalog_id=catalog_id ) 
 
 
