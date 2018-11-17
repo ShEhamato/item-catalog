@@ -1,21 +1,73 @@
 <!DocType html>
-<html>
-    <header>
-            <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
-    </header>
-    <body class="catalog-list">
-        <a href='{{url_for('createCatalog')}}'>
-            Create New Catalog
-        </a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Shereen Portfolio</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */ 
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+
+    .catalog {
+      background-color:rgba(56, 55, 55, 0.377);
+      padding: 1%;
+      font-family:Courier New, Courier, monospace;
+     
+    }
+
+    .row {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display:         flex;
+        flex-wrap: wrap;
+      }
+      .row > [class*='col-'] {
+        display: flex;
+        flex-direction: column;
+      }
+    
+  </style>
+</head>
+    <body>
+            <nav class="navbar navbar-inverse">
+                <div class="container-fluid">
+                        <ul class="nav navbar-nav navbar-right">
+                          <li><a href='{{url_for('showLogin')}}'><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                        </ul>
+                </div>
+            </nav>
+            <div class="container-fluid">
         <h2 class ="catalog-header">Catalogs</h2>
+
+        <a href='{{url_for('createCatalog')}}'>
+            <button type="button" class="btn btn-outline-secondary">Create New Catalog</button>
+        </a>
+
         <div>
+        
+    <div class="row">
         {%for cat in catalog_list%}
-        <div>
-            <h5><a href="{{url_for('viewCatalog', catalog_id=cat.id)}}">{{cat.name}}</a></h5>
-            <p>{{cat.description}}</p>
-        </div>
-    <hr>
+            <div class="col-sm-4 ">
+                <h3 class= "catalog"><b><a href="{{url_for('showItemList', catalog_id=cat.id)}}">{{cat.name}}</a></b></h3>
+                <p>{{cat.description}}</p>
+                
+                <hr>
+                
+
+            </div>
+           
         {%endfor%}
+       
     </div>
+</div> 
+</div>
     </body>
 </html>
