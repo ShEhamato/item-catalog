@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, redirect, request, flash, make_response
+from flask import Flask, render_template, url_for, redirect, request, flash, make_response, jsonify
 from database_setup import Base,  User
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -288,6 +288,29 @@ def getUserID(email):
         return None
 
 
+# JSON APIs to view Catalog Information
+@app.route('/catalog/<int:catalog_id>/item/JSON')
+def CatalogCatalogJSON(catalog_id):
+    session = DBSession()
+    catalog = session.query(Catalog).filter_by(id=catalog_id).one()
+    items = session.query(CatalogItem).filter_by(
+        catalog_id=catalog_id).all()
+    return jsonify(catalogItems=[i.serialize for i in items])
+
+
+@app.route('/catalog/<int:catalog_id>/item/<int:item_id>/JSON')
+def catalogItemJSON(catalog_id, item_id):
+    session = DBSession()
+    item = session.query(CatalogItem).filter_by(id=item_id).one()
+    return jsonify(catalog_Item=item.serialize)
+
+
+@app.route('/catalog/JSON')
+def catalogsJSON():
+    session = DBSession()
+    catalogs = session.query(Catalog).all()
+    return jsonify(catalogs=[r.serialize for r in catalogs])
+
 @app.route('/')
 @app.route('/catalogs')
 def listCatalog():
@@ -295,7 +318,7 @@ def listCatalog():
     catalogList = session.query(Catalog)
     if 'user_id' not in login_session:
         return render_template('catalog-list-not-loggedin.html', catalog_list=catalogList )
-    return render_template('catalog-list.html', catalog_list=catalogList , user=login_session['username'])
+    return render_template('catalog-list.html', catalog_list=catalogList , user=login_session['email'])
 
 
 @app.route('/catalogs/new', methods=['POST', 'GET'])
@@ -309,7 +332,7 @@ def createCatalog():
         session.commit()
         return redirect(url_for('listCatalog'))
     else:
-        return render_template('catalog-new.html' , user=login_session['username'])  
+        return render_template('catalog-new.html' , user=login_session['email'])  
 
 
 @app.route('/catalogs/<int:catalog_id>/view')
@@ -336,7 +359,7 @@ def editCatalog(catalog_id):
         session.commit()
         return redirect(url_for('listCatalog'))
     else:
-        return render_template('catalog-edit.html' , catalog = catalog , user=login_session['username']) 
+        return render_template('catalog-edit.html' , catalog = catalog , user=login_session['email']) 
 
 
 @app.route('/catalogs/<int:catalog_id>/delete' , methods=['POST', 'GET'])
@@ -353,7 +376,7 @@ def deleteCatalog(catalog_id):
         session.commit()
         return redirect(url_for('listCatalog'))
     else:
-        return render_template('catalog-delete.html', catalog = catalog, user=login_session['username'] ) 
+        return render_template('catalog-delete.html', catalog = catalog, user=login_session['email'] ) 
 ##############################################
 @app.route('/catalogs/<int:catalog_id>/item-list')
 def showItemList(catalog_id):
@@ -361,7 +384,7 @@ def showItemList(catalog_id):
     itemList = session.query(CatalogItem).filter_by(catalog_id=catalog_id)
     if 'user_id' not in login_session:
         return render_template('item-list-not-loggedin.html', item_list=itemList, catalog_id=catalog_id )
-    return render_template('item-list.html', item_list=itemList , catalog_id=catalog_id , user=login_session['username'])
+    return render_template('item-list.html', item_list=itemList , catalog_id=catalog_id , user=login_session['email'])
 
 
 @app.route('/catalogs/<int:catalog_id>/items/new', methods=['POST', 'GET'])
@@ -380,7 +403,7 @@ def createItem(catalog_id):
         session.commit()
         return redirect(url_for('showItemList', catalog_id=catalog_id ))
     else:
-        return render_template('item-new.html', catalog_id=catalog_id , user=login_session['username'])  
+        return render_template('item-new.html', catalog_id=catalog_id , user=login_session['email'])  
 
 
 @app.route('/catalogs/<int:catalog_id>/items/<int:item_id>/view')
@@ -411,7 +434,7 @@ def editItem(catalog_id, item_id):
         session.commit()
         return redirect(url_for('showItemList', catalog_id= catalog_id ))
     else:
-        return render_template('item-edit.html' , item = item, catalog_id= catalog_id , user=login_session['username']) 
+        return render_template('item-edit.html' , item = item, catalog_id= catalog_id , user=login_session['email']) 
 
 
 @app.route('/catalogs/<int:catalog_id>/items/<int:item_id>/delete' , methods=['POST', 'GET'])
@@ -428,7 +451,7 @@ def deleteItem(catalog_id, item_id):
         session.commit()
         return redirect(url_for('showItemList', catalog_id= catalog_id ))
     else:
-        return render_template('item-delete.html', item = item , catalog_id= catalog_id, user=login_session['username']) 
+        return render_template('item-delete.html', item = item , catalog_id= catalog_id, user=login_session['email']) 
 
 
 
