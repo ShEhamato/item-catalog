@@ -421,14 +421,14 @@ def deleteItem(catalog_id, item_id):
     session = DBSession()
     item = session.query(CatalogItem).filter_by(id=item_id).one()
     if login_session['user_id'] != item.user_id:
-        return "<script>function myFunction() {alert('You are not authorized to delete this catalog. Please create your own catalog in order to delete.');}</script><body onload='myFunction()'>"
+        return "<script>function myFunction() {alert('You are not authorized to delete this Item. Please create your own item in order to delete.');}</script><body onload='myFunction()'>"
     
     if request.method == 'POST':
         session.delete(item)
         session.commit()
         return redirect(url_for('showItemList', catalog_id= catalog_id ))
     else:
-        return render_template('catalog-delete.html', item = item , catalog_id= catalog_id, user=login_session['username']) 
+        return render_template('item-delete.html', item = item , catalog_id= catalog_id, user=login_session['username']) 
 
 
 
