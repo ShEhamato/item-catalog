@@ -404,9 +404,9 @@ def editItem(catalog_id, item_id):
         if request.form['description']:
             item.description= request.form['description']
         if request.form['price']:
-            item.description= request.form['price']
+            item.price= request.form['price']
         if request.form['duration']:
-            item.description= request.form['duration']
+            item.duration= request.form['duration']
         session.add(item)
         session.commit()
         return redirect(url_for('showItemList', catalog_id= catalog_id ))
