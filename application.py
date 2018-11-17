@@ -295,7 +295,7 @@ def listCatalog():
     catalogList = session.query(Catalog)
     if 'user_id' not in login_session:
         return render_template('catalog-list-not-loggedin.html', catalog_list=catalogList )
-    return render_template('catalog-list.html', catalog_list=catalogList )
+    return render_template('catalog-list.html', catalog_list=catalogList , user=login_session['username'])
 
 
 @app.route('/catalogs/new', methods=['POST', 'GET'])
@@ -309,7 +309,7 @@ def createCatalog():
         session.commit()
         return redirect(url_for('listCatalog'))
     else:
-        return render_template('catalog-new.html')  
+        return render_template('catalog-new.html' , user=login_session['username'])  
 
 
 @app.route('/catalogs/<int:catalog_id>/view')
@@ -336,7 +336,7 @@ def editCatalog(catalog_id):
         session.commit()
         return redirect(url_for('listCatalog'))
     else:
-        return render_template('catalog-edit.html' , catalog = catalog ) 
+        return render_template('catalog-edit.html' , catalog = catalog , user=login_session['username']) 
 
 
 @app.route('/catalogs/<int:catalog_id>/delete' , methods=['POST', 'GET'])
@@ -353,7 +353,7 @@ def deleteCatalog(catalog_id):
         session.commit()
         return redirect(url_for('listCatalog'))
     else:
-        return render_template('catalog-delete.html', catalog = catalog) 
+        return render_template('catalog-delete.html', catalog = catalog, user=login_session['username'] ) 
 ##############################################
 @app.route('/catalogs/<int:catalog_id>/item-list')
 def showItemList(catalog_id):
@@ -361,7 +361,7 @@ def showItemList(catalog_id):
     itemList = session.query(CatalogItem).filter_by(catalog_id=catalog_id)
     if 'user_id' not in login_session:
         return render_template('item-list-not-loggedin.html', item_list=itemList, catalog_id=catalog_id )
-    return render_template('item-list.html', item_list=itemList , catalog_id=catalog_id )
+    return render_template('item-list.html', item_list=itemList , catalog_id=catalog_id , user=login_session['username'])
 
 
 @app.route('/catalogs/<int:catalog_id>/items/new', methods=['POST', 'GET'])
@@ -380,7 +380,7 @@ def createItem(catalog_id):
         session.commit()
         return redirect(url_for('showItemList', catalog_id=catalog_id ))
     else:
-        return render_template('item-new.html', catalog_id=catalog_id )  
+        return render_template('item-new.html', catalog_id=catalog_id , user=login_session['username'])  
 
 
 @app.route('/catalogs/<int:catalog_id>/items/<int:item_id>/view')
@@ -411,7 +411,7 @@ def editItem(catalog_id, item_id):
         session.commit()
         return redirect(url_for('showItemList', catalog_id= catalog_id ))
     else:
-        return render_template('item-edit.html' , item = item, catalog_id= catalog_id ) 
+        return render_template('item-edit.html' , item = item, catalog_id= catalog_id , user=login_session['username']) 
 
 
 @app.route('/catalogs/<int:catalog_id>/items/<int:item_id>/delete' , methods=['POST', 'GET'])
@@ -428,7 +428,7 @@ def deleteItem(catalog_id, item_id):
         session.commit()
         return redirect(url_for('showItemList', catalog_id= catalog_id ))
     else:
-        return render_template('catalog-delete.html', item = item , catalog_id= catalog_id) 
+        return render_template('catalog-delete.html', item = item , catalog_id= catalog_id, user=login_session['username']) 
 
 
 
