@@ -254,10 +254,10 @@ def disconnect():
         del login_session['user_id']
         del login_session['provider']
         flash("You have successfully been logged out.")
-        return redirect(url_for('showLogin'))
+        return redirect(url_for('listCatalog'))
     else:
         flash("You were not logged in")
-        return redirect(url_for('showLogin'))
+        return redirect(url_for('listCatalog'))
 
 
 # User Helper Functions
