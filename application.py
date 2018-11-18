@@ -86,7 +86,7 @@ def fbconnect():
         user_id = createUser(login_session)
     login_session['user_id'] = user_id
 
-  # Get user picture
+    # Get user picture
     url = 'https://graph.facebook.com/v2.8/me/picture?access_token=%s&redirect=0&height=200&width=200' % token
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
@@ -359,9 +359,9 @@ def editCatalog(catalog_id):
     catalog = session.query(Catalog).filter_by(id=catalog_id).one()
     if login_session['user_id'] != catalog.user_id:
         return render_template(
-        'permission-denied.html',
-         catalog_id=catalog_id
-         )
+            'permission-denied.html',
+            catalog_id=catalog_id
+            )
     if request.method == 'POST':
         if request.form['name']:
             catalog.name = request.form['name']
@@ -386,9 +386,9 @@ def deleteCatalog(catalog_id):
     catalog = session.query(Catalog).filter_by(id=catalog_id).one()
     if login_session['user_id'] != catalog.user_id:
         return render_template(
-        'permission-denied.html',
-         catalog_id=catalog_id
-         )
+            'permission-denied.html',
+            catalog_id=catalog_id
+            )
 
     if request.method == 'POST':
         session.delete(catalog)
@@ -425,10 +425,10 @@ def createItem(catalog_id):
     session = DBSession()
     catalog = session.query(Catalog).filter_by(id=catalog_id).one()
     if login_session['user_id'] != catalog.user_id:
-         return render_template(
-        'permission-denied.html',
-         catalog_id=catalog_id
-         )
+        return render_template(
+            'permission-denied.html',
+            catalog_id=catalog_id
+            )
     if request.method == 'POST':
         session = DBSession()
         item = CatalogItem(
@@ -468,10 +468,10 @@ def editItem(catalog_id, item_id):
     session = DBSession()
     item = session.query(CatalogItem).filter_by(id=item_id).one()
     if login_session['user_id'] != item.user_id:
-         return render_template(
-        'permission-denied.html',
-         catalog_id=catalog_id
-         )
+        return render_template(
+            'permission-denied.html',
+            catalog_id=catalog_id
+            )
     if request.method == 'POST':
         if request.form['name']:
             item.name = request.form['name']
@@ -502,10 +502,10 @@ def deleteItem(catalog_id, item_id):
     session = DBSession()
     item = session.query(CatalogItem).filter_by(id=item_id).one()
     if login_session['user_id'] != item.user_id:
-       return render_template(
-        'permission-denied.html',
-         catalog_id=catalog_id
-         )
+        return render_template(
+            'permission-denied.html',
+            catalog_id=catalog_id
+            )
     if request.method == 'POST':
         session.delete(item)
         session.commit()
