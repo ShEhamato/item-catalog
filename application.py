@@ -50,9 +50,7 @@ def fbconnect():
         'web']['app_id']
     app_secret = json.loads(
         open('fb_client_secrets.json', 'r').read())['web']['app_secret']
-    url = 'https://graph.facebook.com/oauth/access_token?grant_type='
-    + 'fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s'
-    % (app_id, app_secret, access_token)
+    url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s ' % (app_id, app_secret, access_token)
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
 
@@ -68,8 +66,7 @@ def fbconnect():
     '''
     token = result.split(',')[0].split(':')[1].replace('"', '')
 
-    url = 'https://graph.facebook.com/v2.8/me?access_token=%s&'
-    +'fields=name,id,email' % token
+    url = 'https://graph.facebook.com/v2.8/me?access_token=%s&fields=name,id,email' % token
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
     data = json.loads(result)
@@ -90,8 +87,7 @@ def fbconnect():
     login_session['user_id'] = user_id
 
     # Get user picture
-    url = 'https://graph.facebook.com/v2.8/me/picture?access_token=%s'
-    +'&redirect=0&height=200&width=200' % token
+    url = 'https://graph.facebook.com/v2.8/me/picture?access_token=%s&redirect=0&height=200&width=200' % token
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
     data = json.loads(result)
@@ -118,8 +114,7 @@ def fbdisconnect():
     facebook_id = login_session['facebook_id']
     # The access token must me included to successfully logout
     access_token = login_session['access_token']
-    url = 'https://graph.facebook.com/%s/permissions?access_token=%s' %
-    (facebook_id, access_token)
+    url = 'https://graph.facebook.com/%s/permissions?access_token=%s' % (facebook_id, access_token)
     h = httplib2.Http()
     result = h.request(url, 'DELETE')[1]
     return "you have been logged out"
@@ -180,8 +175,7 @@ def gconnect():
     if stored_access_token is not None and gplus_id == stored_gplus_id:
         print login_session['access_token']
         print login_session['provider']
-        response =
-        make_response(json.dumps('Current user is already connected.'), 200)
+        response = make_response(json.dumps('Current user is already connected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -326,8 +320,10 @@ def listCatalog():
     session = DBSession()
     catalogList = session.query(Catalog)
     if 'user_id' not in login_session:
-        return render_template
-        ('catalog-list-not-loggedin.html', catalog_list=catalogList)
+        return render_template(
+            'catalog-list-not-loggedin.html',
+            catalog_list=catalogList
+            )
     return render_template(
         'catalog-list.html', catalog_list=catalogList,
         user=login_session['email']
@@ -363,9 +359,10 @@ def editCatalog(catalog_id):
     session = DBSession()
     catalog = session.query(Catalog).filter_by(id=catalog_id).one()
     if login_session['user_id'] != catalog.user_id:
-        return "<script>function myFunction() {alert('You are not authorized "
-        +"to edit this catalog. Please create your own catalog "
-        +"in order to edit.');}</script><body onload='myFunction()'>"
+        return render_template(
+        'permission-denied.html',
+         catalog_id=catalog_id
+         )
     if request.method == 'POST':
         if request.form['name']:
             catalog.name = request.form['name']
@@ -389,9 +386,10 @@ def deleteCatalog(catalog_id):
     session = DBSession()
     catalog = session.query(Catalog).filter_by(id=catalog_id).one()
     if login_session['user_id'] != catalog.user_id:
-        return "<script>function myFunction() {alert('You are not "
-        +"authorized to delete this catalog. Please create your own catalog "
-        +"in order to delete.');}</script><body onload='myFunction()'>"
+        return render_template(
+        'permission-denied.html',
+         catalog_id=catalog_id
+         )
 
     if request.method == 'POST':
         session.delete(catalog)
@@ -428,9 +426,10 @@ def createItem(catalog_id):
     session = DBSession()
     catalog = session.query(Catalog).filter_by(id=catalog_id).one()
     if login_session['user_id'] != catalog.user_id:
-        return "<script>function myFunction() {alert('You are not authorized "
-        +"to delete this catalog. Please create your own catalog in order to "
-        +"delete.');}</script><body onload='myFunction()'>"
+         return render_template(
+        'permission-denied.html',
+         catalog_id=catalog_id
+         )
     if request.method == 'POST':
         session = DBSession()
         item = CatalogItem(
@@ -470,9 +469,10 @@ def editItem(catalog_id, item_id):
     session = DBSession()
     item = session.query(CatalogItem).filter_by(id=item_id).one()
     if login_session['user_id'] != item.user_id:
-        return "<script>function myFunction() {alert('You are not "
-        +"authorized to edit this catalog. Please create your own "
-        +"catalog in order to edit.');}</script><body onload='myFunction()'>"
+         return render_template(
+        'permission-denied.html',
+         catalog_id=catalog_id
+         )
     if request.method == 'POST':
         if request.form['name']:
             item.name = request.form['name']
@@ -503,9 +503,10 @@ def deleteItem(catalog_id, item_id):
     session = DBSession()
     item = session.query(CatalogItem).filter_by(id=item_id).one()
     if login_session['user_id'] != item.user_id:
-        return "<script>function myFunction() {alert('You are not authorized"+
-        " to delete this Item. Please create your own item in order"+
-        " to delete.');}</script><body onload='myFunction()'>"
+       return render_template(
+        'permission-denied.html',
+         catalog_id=catalog_id
+         )
     if request.method == 'POST':
         session.delete(item)
         session.commit()
