@@ -86,13 +86,13 @@ def fbconnect():
         user_id = createUser(login_session)
     login_session['user_id'] = user_id
 
-    # Get user picture
-    url = 'https://graph.facebook.com/v2.8/me/picture?access_token=%s&redirect=0&height=200&width=200' % token
-    h = httplib2.Http()
-    result = h.request(url, 'GET')[1]
-    data = json.loads(result)
+    # # Get user picture
+    # url = 'https://graph.facebook.com/v2.8/me/picture?access_token=%s&redirect=0&height=200&width=200' % token
+    # h = httplib2.Http()
+    # result = h.request(url, 'GET')[1]
+    # data = json.loads(result)
 
-    login_session['picture'] = data["data"]["url"]
+    # login_session['picture'] = data["data"]["url"]
 
     output = ''
     output += '<h1>Welcome, '
@@ -100,7 +100,7 @@ def fbconnect():
 
     output += '!</h1>'
     output += '<img src="'
-    output += login_session['picture']
+    # output += login_session['picture']
     output += ' style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
 
     flash("Now logged in as %s" % login_session['username'])
@@ -190,7 +190,7 @@ def gconnect():
     data = answer.json()
 
     login_session['username'] = data['email']
-    login_session['picture'] = data['picture']
+    # login_session['picture'] = data['picture']
     login_session['email'] = data['email']
     # ADD PROVIDER TO LOGIN SESSION
     login_session['provider'] = 'google'
@@ -207,7 +207,7 @@ def gconnect():
     output += login_session['email']
     output += '!</h1>'
     output += '<img src="'
-    output += login_session['picture']
+    # output += login_session['picture']
     output += ' style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
@@ -252,7 +252,7 @@ def disconnect():
             del login_session['facebook_id']
         del login_session['username']
         del login_session['email']
-        del login_session['picture']
+        # del login_session['picture']
         del login_session['user_id']
         del login_session['provider']
         flash("You have successfully been logged out.")
@@ -266,7 +266,7 @@ def disconnect():
 def createUser(login_session):
     session = DBSession()
     newUser = User(name=login_session['username'], email=login_session[
-                   'email'], picture=login_session['picture'])
+                   'email'])
     session.add(newUser)
     session.commit()
     user = session.query(User).filter_by(email=login_session['email']).one()
