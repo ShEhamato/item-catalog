@@ -265,8 +265,10 @@ def disconnect():
 # User Helper Functions
 def createUser(login_session):
     session = DBSession()
-    newUser = User(name=login_session['username'], email=login_session[
-                   'email'])
+    newUser = User(
+                name=login_session['username'],
+                email=login_session['email']
+            )
     session.add(newUser)
     session.commit()
     user = session.query(User).filter_by(email=login_session['email']).one()
@@ -357,16 +359,16 @@ def editCatalog(catalog_id):
         return redirect(url_for('showLogin'))
     session = DBSession()
     catalog = session.query(Catalog).filter_by(id=catalog_id).first()
-    if catalog == None:
+    if catalog is None:
         return render_template(
             'no-page.html',
             user=login_session['email']
-            ) 
+            )
     if login_session['user_id'] != catalog.user_id:
         return render_template(
             'permission-denied.html',
             catalog_id=catalog_id
-            )       
+            )      
     if request.method == 'POST':
         if request.form['name']:
             catalog.name = request.form['name']
@@ -389,11 +391,11 @@ def deleteCatalog(catalog_id):
         return redirect(url_for('showLogin'))
     session = DBSession()
     catalog = session.query(Catalog).filter_by(id=catalog_id).first()
-    if catalog == None:
+    if catalog is None:
         return render_template(
             'no-page.html',
             user=login_session['email']
-            ) 
+            )
     if login_session['user_id'] != catalog.user_id:
         return render_template(
             'permission-denied.html',
@@ -440,11 +442,11 @@ def createItem(catalog_id):
         return redirect(url_for('showLogin'))
     session = DBSession()
     catalog = session.query(Catalog).filter_by(id=catalog_id).first()
-    if catalog == None:
+    if catalog is None:
         return render_template(
             'no-page.html',
             user=login_session['email']
-            ) 
+            )
     if login_session['user_id'] != catalog.user_id:
         return render_template(
             'permission-denied.html',
@@ -475,11 +477,11 @@ def createItem(catalog_id):
 def viewItem(catalog_id, item_id):
     session = DBSession()
     item = session.query(CatalogItem).filter_by(id=item_id).first()
-    if item  == None:
+    if item is None:
         return render_template(
             'no-page.html',
             user=login_session['email']
-            ) 
+            )
     return render_template('item-view.html', item=item, catalog_id=catalog_id)
 
 
@@ -493,11 +495,11 @@ def editItem(catalog_id, item_id):
         return redirect(url_for('showLogin'))
     session = DBSession()
     item = session.query(CatalogItem).filter_by(id=item_id).first()
-    if item  == None:
+    if item is None:
         return render_template(
             'no-page.html',
             user=login_session['email']
-            ) 
+            )
     if login_session['user_id'] != item.user_id:
         return render_template(
             'permission-denied.html',
@@ -532,11 +534,11 @@ def deleteItem(catalog_id, item_id):
         return redirect(url_for('showLogin'))
     session = DBSession()
     item = session.query(CatalogItem).filter_by(id=item_id).first()
-    if item  == None:
+    if item is None:
         return render_template(
             'no-page.html',
             user=login_session['email']
-            ) 
+            )
     if login_session['user_id'] != item.user_id:
         return render_template(
             'permission-denied.html',
