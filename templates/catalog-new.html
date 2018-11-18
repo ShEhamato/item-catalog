@@ -43,10 +43,10 @@
             <form action='{{url_for('createCatalog')}}' method="POST">
                     <div class="form-group">
             <label>Name</label>
-            <input type="text" name="name" class="form-control" >
+            <input type="text" name="name" class="form-control" required >
             </div>
             <label>Description</label>
-            <input type="text" name="description" class="form-control" rows="5" ></textarea>
+            <input type="text" name="description" class="form-control" rows="5" required></textarea>
             <input type="submit" value="Submit">
         </form>
         </div>

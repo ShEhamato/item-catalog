@@ -47,13 +47,13 @@
             <form action='{{url_for('createItem',  catalog_id=catalog_id)}}' method="POST" class="form-group">
             
             <label>Name</label>
-            <input type="text" name="name" class="form-control">
+            <input type="text" name="name" class="form-control" required>
             <label>Price</label>
-            <input type="text" name="price" class="form-control">
+            <input type="text" name="price" class="form-control" required>
             <label>Duration</label>
-            <input type="text" name="duration" class="form-control" >
+            <input type="text" name="duration" class="form-control" required>
             <label>Description</label>
-            <input type="text" name="description" class="form-control" >
+            <input type="text" name="description" class="form-control" required>
             <input type="submit" value="Submit">
             
         </form>
