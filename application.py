@@ -86,7 +86,7 @@ def fbconnect():
         user_id = createUser(login_session)
     login_session['user_id'] = user_id
 
-    # Get user picture
+  # Get user picture
     url = 'https://graph.facebook.com/v2.8/me/picture?access_token=%s&redirect=0&height=200&width=200' % token
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
@@ -101,8 +101,7 @@ def fbconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;'
-    +'-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output += ' style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
 
     flash("Now logged in as %s" % login_session['username'])
     return output
@@ -209,8 +208,7 @@ def gconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;'
-    +'-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output += ' style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
@@ -234,8 +232,9 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     else:
-        response = make_response
-        (json.dumps('Failed to revoke token for given user.', 400))
+        response = make_response(
+            json.dumps('Failed to revoke token for given user.', 400)
+            )
         response.headers['Content-Type'] = 'application/json'
         return response
 
