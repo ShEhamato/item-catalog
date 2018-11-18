@@ -356,12 +356,17 @@ def editCatalog(catalog_id):
     if 'username' not in login_session:
         return redirect(url_for('showLogin'))
     session = DBSession()
-    catalog = session.query(Catalog).filter_by(id=catalog_id).one()
+    catalog = session.query(Catalog).filter_by(id=catalog_id).first()
+    if catalog == None:
+        return render_template(
+            'no-page.html',
+            user=login_session['email']
+            ) 
     if login_session['user_id'] != catalog.user_id:
         return render_template(
             'permission-denied.html',
             catalog_id=catalog_id
-            )
+            )       
     if request.method == 'POST':
         if request.form['name']:
             catalog.name = request.form['name']
@@ -383,7 +388,12 @@ def deleteCatalog(catalog_id):
     if 'username' not in login_session:
         return redirect(url_for('showLogin'))
     session = DBSession()
-    catalog = session.query(Catalog).filter_by(id=catalog_id).one()
+    catalog = session.query(Catalog).filter_by(id=catalog_id).first()
+    if catalog == None:
+        return render_template(
+            'no-page.html',
+            user=login_session['email']
+            ) 
     if login_session['user_id'] != catalog.user_id:
         return render_template(
             'permission-denied.html',
@@ -429,7 +439,12 @@ def createItem(catalog_id):
     if 'user_id' not in login_session:
         return redirect(url_for('showLogin'))
     session = DBSession()
-    catalog = session.query(Catalog).filter_by(id=catalog_id).one()
+    catalog = session.query(Catalog).filter_by(id=catalog_id).first()
+    if catalog == None:
+        return render_template(
+            'no-page.html',
+            user=login_session['email']
+            ) 
     if login_session['user_id'] != catalog.user_id:
         return render_template(
             'permission-denied.html',
@@ -459,7 +474,12 @@ def createItem(catalog_id):
 @app.route('/catalogs/<int:catalog_id>/items/<int:item_id>/view')
 def viewItem(catalog_id, item_id):
     session = DBSession()
-    item = session.query(CatalogItem).filter_by(id=item_id).one()
+    item = session.query(CatalogItem).filter_by(id=item_id).first()
+    if item  == None:
+        return render_template(
+            'no-page.html',
+            user=login_session['email']
+            ) 
     return render_template('item-view.html', item=item, catalog_id=catalog_id)
 
 
@@ -472,7 +492,12 @@ def editItem(catalog_id, item_id):
     if 'username' not in login_session:
         return redirect(url_for('showLogin'))
     session = DBSession()
-    item = session.query(CatalogItem).filter_by(id=item_id).one()
+    item = session.query(CatalogItem).filter_by(id=item_id).first()
+    if item  == None:
+        return render_template(
+            'no-page.html',
+            user=login_session['email']
+            ) 
     if login_session['user_id'] != item.user_id:
         return render_template(
             'permission-denied.html',
@@ -506,7 +531,12 @@ def deleteItem(catalog_id, item_id):
     if 'username' not in login_session:
         return redirect(url_for('showLogin'))
     session = DBSession()
-    item = session.query(CatalogItem).filter_by(id=item_id).one()
+    item = session.query(CatalogItem).filter_by(id=item_id).first()
+    if item  == None:
+        return render_template(
+            'no-page.html',
+            user=login_session['email']
+            ) 
     if login_session['user_id'] != item.user_id:
         return render_template(
             'permission-denied.html',
