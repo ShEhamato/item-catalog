@@ -406,10 +406,16 @@ def deleteCatalog(catalog_id):
 def showItemList(catalog_id):
     session = DBSession()
     itemList = session.query(CatalogItem).filter_by(catalog_id=catalog_id)
+    catalog = session.query(Catalog).filter_by(id=catalog_id)
     if 'user_id' not in login_session:
         return render_template(
             'item-list-not-loggedin.html', item_list=itemList,
             catalog_id=catalog_id
+            )
+    if catalog.count() == 0:
+        return render_template(
+            'no-page.html',
+            user=login_session['email']
             )
     return render_template(
             'item-list.html', item_list=itemList, catalog_id=catalog_id,
