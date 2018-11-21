@@ -94,7 +94,6 @@ def fbconnect():
     output += login_session['username']
 
     output += '!</h1>'
-    output += '<img src="'
     flash("Now logged in as %s" % login_session['username'])
     return output
 
@@ -203,7 +202,6 @@ def gconnect():
     output += '<h1>Welcome, '
     output += login_session['email']
     output += '!</h1>'
-    output += '<img src="'
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
